@@ -1,12 +1,12 @@
 import numpy as np
 from coord_transform import CoordTransform
+# programmer: Arvin chamasrmani
 
 
 def calM_N(phi):
     """
     Compute meridian (M) and prime-vertical (N) radii of curvature
     for a given geodetic latitude phi [rad] (IERS 2003 model).
-    programmer: Arvin chamasrmani
     """
     a = 6378136.6  # semi-major axis [m]
     b = 6356751.9  # semi-minor axis [m]
@@ -259,4 +259,5 @@ class Mechanization_OOP:
         r_n = r_n + 0.5 * (temp_r @ (v_n_old + v_n) * dt)
 
         return r_n, v_n, q
+
 
