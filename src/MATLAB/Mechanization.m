@@ -1,3 +1,5 @@
+
+% programmer: Arvin chamasemani
 classdef Mechanization
     methods(Static)
         function [r_n_cal, v_n_cal, q_cal, roll_cal, pitch_cal, yaw_cal] = ...
@@ -118,3 +120,4 @@ classdef Mechanization
          end
     end
 end
+
