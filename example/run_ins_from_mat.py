@@ -8,6 +8,9 @@ This script demonstrates a full INS processing pipeline:
 
 Run from the examples/ folder:
     python run_ins_from_mat.py
+    
+programmer: Arvin chamasrmani
+
 """
 
 import os
@@ -74,3 +77,4 @@ plot_INS(
 )
 
 print("Done.")
+
