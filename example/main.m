@@ -1,6 +1,7 @@
 clc
 clear
 close all
+% programmer: Arvin chamasrmani
 
 % ensure script runs from its own folder
 cd(fileparts(mfilename('fullpath')))
@@ -15,3 +16,4 @@ load("../data/path2sensor_output.mat");
 % plotting
 plotting(t, r_n, v_n, roll, pitch, yaw, ...
                 r_cal, v_cal, roll_cal, pitch_cal, yaw_cal)
+
