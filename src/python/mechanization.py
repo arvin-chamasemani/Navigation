@@ -1,43 +1,8 @@
 import numpy as np
 from coord_transform import CoordTransform
+from SkewSymmetry import SkewSymmetry
+from calM_N import calM_N
 # programmer: Arvin chamasrmani
-
-
-def calM_N(phi):
-    """
-    Compute meridian (M) and prime-vertical (N) radii of curvature
-    for a given geodetic latitude phi [rad] (IERS 2003 model).
-    """
-    a = 6378136.6  # semi-major axis [m]
-    b = 6356751.9  # semi-minor axis [m]
-
-    e = np.sqrt(1.0 - (b / a) ** 2)
-
-    sin_phi = np.sin(phi)
-    denom = np.sqrt(1.0 - (e * sin_phi) ** 2)
-
-    N = a / denom
-    M = a * (1.0 - e**2) / (denom**3)
-
-    return M, N
-
-
-def SkewSymmetry(v):
-    """
-    Return the 3×3 skew-symmetric matrix S such that:
-        S @ a = np.cross(v, a)
-    for any 3×1 vector a.
-    """
-    v = np.asarray(v, dtype=float).reshape(3)
-    return np.array(
-        [
-            [0.0, -v[2], v[1]],
-            [v[2], 0.0, -v[0]],
-            [-v[1], v[0], 0.0],
-        ],
-        dtype=float,
-    )
-
 
 class Mechanization_OOP:
     """
