@@ -46,69 +46,69 @@ classdef KalmanFilter
         end
     end
     methods (Static)
-        function [x_hist, P_hist] = runBatchKF( ...
-                t, r_cal, v_cal, q_cal, ...   % mechanization outputs
-                r_meas,  ...          % "measurements" (e.g. r_n, v_n)
-                f_b_IMU, ...     % IMU data
-                Q_sens,var_GPS, ... % noise covariances
-                P)                  % initial covariances 
-            % RUNBATCHKF  Run error-state KF over the whole dataset
-            %
-            % Outputs:
-            %   x_hist : [9 x N]  error-state history
-            %   P_hist : [9 x 9 x N] covariance history
-            %   r_corr : [3 x N]  corrected position (r_cal - δr)
+        % function [x_hist, P_hist] = runBatchKF( ...
+        %         t, r_cal, v_cal, q_cal, ...   % mechanization outputs
+        %         r_meas,  ...          % "measurements" (e.g. r_n, v_n)
+        %         f_b_IMU, ...     % IMU data
+        %         Q_sens,var_GPS, ... % noise covariances
+        %         P)                  % initial covariances 
+        %     % RUNBATCHKF  Run error-state KF over the whole dataset
+        %     %
+        %     % Outputs:
+        %     %   x_hist : [9 x N]  error-state history
+        %     %   P_hist : [9 x 9 x N] covariance history
+        %     %   r_corr : [3 x N]  corrected position (r_cal - δr)
+        % 
+        %     nx = 9;                     % [dr; dv; dtheta]
+        %     N  = numel(t);
+        % 
+        %     % --- initial state and covariance ---
+        %     x_hat = zeros(nx,1);
+        % 
+        %     % --- create KF object (F,Q,H will be overwritten every step) ---
+        %     R     = diag(var_GPS);
+        %     H = [eye(3), zeros(3),zeros(3)];    
+        %     KF = KalmanFilter(eye(nx), eye(nx), H, R);
+        % 
+        %     % --- preallocate histories ---
+        %     x_hist = zeros(nx, N);
+        %     P_hist = zeros(nx, nx, N);
+        % 
+        % 
+        %     % ================== MAIN KF LOOP ==================
+        %     for k = 2:N
+        %         dt = t(5) - t(4);
+        % 
+        %         % nav state from mechanization
+        %         r_k = r_cal(:,k);
+        %         v_k = v_cal(:,k);
+        %         q_k = q_cal(:,k);
+        % 
+        %         % IMU data
+        %         f_b_k      = f_b_IMU(:,k);
+        % 
+        %         % ---- build system matrices for this step ----
+        %         F_k = KalmanFilter.F_cal(r_k, v_k, q_k, f_b_k, dt);
+        %         Q_k = KalmanFilter.Q_cal(F_k, Q_sens, q_k, dt);
+        % 
+        %         KF.F = F_k;
+        %         KF.Q = Q_k;
+        %         KF.H = H;
+        %         KF.R = R;
+        % 
+        %         % ---- measurement vector (position + velocity) ----
+        %         z_k = r_meas(:,k)-r_cal(:,k);
+        % 
+        %         % ---- one KF step (returns ONLY x and P) ----
+        %         [x_hat, P] = KF.step(x_hat, P, z_k, []);
+        % 
+        %         % store histories
+        %         x_hist(:,k)     = x_hat;
+        %         P_hist(:,:,k)   = P;
+        % 
+        %     end
     
-            nx = 9;                     % [dr; dv; dtheta]
-            N  = numel(t);
-    
-            % --- initial state and covariance ---
-            x_hat = zeros(nx,1);
-
-            % --- create KF object (F,Q,H will be overwritten every step) ---
-            R     = diag(var_GPS);
-            H = [eye(3), zeros(3),zeros(3)];    
-            KF = KalmanFilter(eye(nx), eye(nx), H, R);
-
-            % --- preallocate histories ---
-            x_hist = zeros(nx, N);
-            P_hist = zeros(nx, nx, N);
-    
-
-            % ================== MAIN KF LOOP ==================
-            for k = 2:N
-                dt = t(5) - t(4);
-    
-                % nav state from mechanization
-                r_k = r_cal(:,k);
-                v_k = v_cal(:,k);
-                q_k = q_cal(:,k);
-
-                % IMU data
-                f_b_k      = f_b_IMU(:,k);
-    
-                % ---- build system matrices for this step ----
-                F_k = KalmanFilter.F_cal(r_k, v_k, q_k, f_b_k, dt);
-                Q_k = KalmanFilter.Q_cal(F_k, Q_sens, q_k, dt);
-    
-                KF.F = F_k;
-                KF.Q = Q_k;
-                KF.H = H;
-                KF.R = R;
-    
-                % ---- measurement vector (position + velocity) ----
-                z_k = r_meas(:,k)-r_cal(:,k);
-    
-                % ---- one KF step (returns ONLY x and P) ----
-                [x_hat, P] = KF.step(x_hat, P, z_k, []);
-    
-                % store histories
-                x_hist(:,k)     = x_hat;
-                P_hist(:,:,k)   = P;
-    
-            end
-    
-        end
+        % end
     
         function F=F_cal(r_n,v_n,q,f_b,dt)
             omega_e=7.2921158e-5;
@@ -152,11 +152,11 @@ classdef KalmanFilter
                     -1/(M+r_n(3)), 0, 0;
                     0, -tan(r_n(1))/(N+r_n(3)), 0];
 
-            F=[F_rr, F_rv, zeros(3,3);
+            F_0=[F_rr, F_rv, zeros(3,3);
                 F_vr, F_vv, Mechanization.SkewSymmetry(f_n);
                 F_er, F_ev, -1*Mechanization.SkewSymmetry(omega_in_n)];
         
-            F=expm(F*dt);
+            F=expm(F_0*dt);
             % F= eye(9)+F*dt;
 
         end

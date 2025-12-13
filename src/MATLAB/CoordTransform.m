@@ -7,6 +7,36 @@ classdef CoordTransform
     %   Quaternion format is q = [e1; e2; e3; eta] = [x; y; z; w]
     %   where eta = scalar part.
     methods(Static)
+        %% --- Quaternion operations ---
+        function q = qmul(q1, q2)
+            %QMUL Multiply (compose) two quaternions.
+            %
+            %   q = CoordTransform.qmul(q1, q2)
+            %
+            %   Quaternion format: q = [x; y; z; w], w = scalar part.
+            %
+            %   This implements the Hamilton product:
+            %       q = q1 ⊗ q2
+            %
+            %   If q1 and q2 represent rotations, the resulting rotation
+            %   corresponds to "apply q2, then apply q1".
+            %
+            %   All inputs are normalized internally.
+
+            % Ensure unit quaternions
+            q1 = CoordTransform.normalizeQ(q1);
+            q2 = CoordTransform.normalizeQ(q2);
+
+            % Split into vector (v) and scalar (s) parts
+            v1 = q1(1:3);  s1 = q1(4);
+            v2 = q2(1:3);  s2 = q2(4);
+
+            % Hamilton product
+            v = s1*v2 + s2*v1 + cross(v1, v2);
+            s = s1*s2 - dot(v1, v2);
+
+            q = CoordTransform.normalizeQ([v; s]);
+        end
 
         %% --- Utilities ---
         function q = normalizeQ(q)

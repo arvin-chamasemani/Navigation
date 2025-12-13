@@ -2,17 +2,23 @@
 % programmer: Arvin chamasemani
 classdef Mechanization
     methods(Static)
-        function [r_n_cal, v_n_cal, q_cal, roll_cal, pitch_cal, yaw_cal] = ...
-                 runBatch(t, r_n, v_n, roll, pitch, yaw, f_b, w_b_ib)
+        % In Mechanization class (add this method)
+        function [r_next, v_next, q_next, yaw_next, pitch_next, roll_next] = step(r, v, q, f_b, w_b_ib, dt)
+            [r_next, v_next, q_next] = Mechanization.dynamics(r, v, q, f_b, w_b_ib, dt);
+            [yaw_next, pitch_next, roll_next] = CoordTransform.q2euler(q_next);
+        end
+
+        function [r_n_cal, v_n_cal, q_cal, yaw_cal, pitch_cal, roll_cal] = ...
+                 runBatch(t, r_n, v_n, yaw, pitch, roll, f_b, w_b_ib )
             N=length(t);
             r_n_0=r_n(:,1);
             v_n_0=v_n(:,1);
-            q_0=CoordTransform.euler2q(roll(1),pitch(1),yaw(1));
+            q_0=CoordTransform.euler2q(yaw(1),pitch(1),roll(1));
             
             r_n_cal(:,1)=r_n_0;
             v_n_cal(:,1)=v_n_0;
             q_cal(:,1)=q_0;
-            
+
             
             for i=2:N
                 dt_i=t(5)-t(4);
@@ -41,8 +47,9 @@ classdef Mechanization
             omega_en_n=[v_n(2)/(N+r_n(3)), -v_n(1)/(M+r_n(3)), -v_n(2)*tan(r_n(1))/(N+r_n(3))]';
             dteta_ib_b=omega_ib_b*dt;
 
-            C_nb=CoordTransform.q2mat(q)';
-            dteta_nb_b = dteta_ib_b - C_nb*(omega_ie_n + omega_en_n)*dt;
+            C_nb=CoordTransform.q2mat(q);
+            C_bn=C_nb';
+            dteta_nb_b = dteta_ib_b - C_bn*(omega_ie_n + omega_en_n)*dt;
             dteta=sqrt(dteta_nb_b(1)^2+dteta_nb_b(2)^2+dteta_nb_b(3)^2);
 
             s = 2*sin(dteta/2)/dteta; c = 2*(cos(dteta/2)-1);
@@ -60,7 +67,7 @@ classdef Mechanization
                 -dteta_nb_b(3)/2, 1, dteta_nb_b(1)/2
                 dteta_nb_b(2)/2, -dteta_nb_b(1)/2, 1];
             dv_fb = f_b*dt;
-            dv_fn = C_nb'*temp*dv_fb;
+            dv_fn = C_nb*temp*dv_fb;
 
             a1 = 9.7803267715;a2 = 0.0052790414;a3 = 0.0000232718;
             a4 =-0.0000030876910891;a5 = 0.0000000043977311;a6 = 0.0000000000007211;
@@ -117,7 +124,7 @@ classdef Mechanization
             S=[0 , -v(3) , v(2);
                 v(3) , 0 , -v(1);
                 -v(2) , v(1) , 0];
-         end
+        end
     end
 end
 
