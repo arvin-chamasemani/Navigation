@@ -1,27 +1,35 @@
 # Navigation
 
-This repository contains an inertial navigation system (INS) implementation for processing navigation data, attitude, and IMU measurements in both Python and MATLAB. It includes core coordinate-transform utilities, mechanization routines, Kalman filtering components, plotting helpers, and example scripts that demonstrate end-to-end use on real sensor datasets.
+A navigation and inertial estimation project focused on modeling, filtering, and visualizing motion using inertial measurement data. This repository brings together Python and MATLAB implementations of a full inertial navigation system (INS), including coordinate transformations, mechanization, Kalman filtering, and trajectory plotting.
 
-## Overview
+## About this project
 
-The project is designed to estimate navigation states from inertial measurement data, including:
+This project was built to explore how inertial navigation algorithms can be implemented and validated from raw IMU-like data. It combines theory and practical computation in a compact, readable codebase that is useful for research, prototyping, and algorithm comparison across two popular engineering environments: Python and MATLAB.
 
-- position (latitude, longitude, height)
-- velocity (North, East, Down)
-- attitude (roll, pitch, yaw / quaternion)
-- trajectory comparison against reference data
+The repository emphasizes:
 
-The implementation includes equivalent algorithms in both:
+- inertial navigation state estimation
+- position and velocity propagation
+- attitude estimation using quaternions
+- coordinate transformations between Euler angles and quaternions
+- comparison of estimated vs. reference trajectories
+- clean visualization for analysis and presentation
 
-- Python under `src/python/`
-- MATLAB under `src/MATLAB/`
+## Project highlights
+
+- Python implementation for modern scientific computing workflows
+- MATLAB implementation for engineering and research pipelines
+- Core INS mechanization logic in a reusable OOP structure
+- Rotation and transformation utilities for navigation mathematics
+- Plotting tools for analyzing position, velocity, and orientation
+- Example scripts demonstrating full end-to-end processing
 
 ## Repository structure
 
 ```text
 Navigation/
-├── data/                          # Navigation datasets used by examples
-├── example/                      # Example scripts for Python and MATLAB
+├── data/                     # Sample navigation datasets
+├── example/                  # Example scripts for Python and MATLAB
 │   ├── main.py
 │   ├── main_EKF.py
 │   ├── main.m
@@ -42,65 +50,51 @@ Navigation/
 │       ├── Mechanization.m
 │       ├── plotting.m
 │       └── plotting_ekf.m
-├── requirements.txt             # Python dependencies
-├── LICENSE                      # if present in the repo, this is the project license
-└── README.md                    # Project documentation
+├── requirements.txt
+├── README.md
+└── LICENSE
 ```
 
-## Features
+## Core capabilities
 
-- INS mechanization using quaternion-based attitude propagation
-- Coordinate transformation between Euler angles and quaternions
-- Skew-symmetric matrix utilities
-- Earth curvature / radii calculations (`calM_N`)
-- Kalman filter implementations for navigation state estimation
-- Visualization utilities for comparing reference and calculated trajectories
-- Python and MATLAB parity for algorithm development and comparison
+### INS mechanization
+The project includes a mechanization pipeline that propagates:
 
-## Requirements
+- position in latitude, longitude, and altitude
+- velocity in NED coordinates
+- attitude represented by quaternions
+- roll, pitch, and yaw estimates
 
-Python dependencies are listed in `requirements.txt` and include scientific computing libraries such as:
+### Coordinate transformations
+The library includes quaternion and Euler angle conversion utilities, enabling robust manipulation of orientation states throughout the navigation workflow.
 
-- NumPy
-- SciPy
-- Matplotlib
+### Filtering and estimation
+Kalman filter modules provide the groundwork for state estimation and filtering of inertial sensor data, supporting navigation estimation tasks.
 
-Install them with:
+### Visualization
+The plotting utilities generate plots for comparing reference trajectories against estimated navigation states, making it easy to validate algorithm performance.
+
+## Getting started
+
+### Prerequisites
+
+This project uses Python scientific packages. Install dependencies with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Quick start (Python)
-
-From the repository root, run the example script:
+### Run the Python example
 
 ```bash
 python example/main.py
 ```
 
-This script:
-
-1. loads the sample dataset from `data/path2sensor_output.mat`
-2. runs the INS mechanization routine
-3. compares estimated and reference states
-4. plots the resulting navigation outputs
+This example loads the dataset in `data/`, runs the mechanization pipeline, and produces plots comparing estimated and reference navigation states.
 
 ## Example usage
 
-The Python implementation exposes an object-oriented mechanization workflow similar to:
-
 ```python
-import os
-import sys
-
-THIS_DIR = os.path.dirname(__file__)
-ROOT_DIR = os.path.dirname(THIS_DIR)
-SRC_DIR = os.path.join(ROOT_DIR, "src/python")
-
-if SRC_DIR not in sys.path:
-    sys.path.insert(0, SRC_DIR)
-
 from mechanization import Mechanization_OOP
 
 r_cal, v_cal, q_cal, roll_cal, pitch_cal, yaw_cal = Mechanization_OOP.runBatch(
@@ -108,44 +102,32 @@ r_cal, v_cal, q_cal, roll_cal, pitch_cal, yaw_cal = Mechanization_OOP.runBatch(
 )
 ```
 
-## Core modules
+## Technologies used
 
-### `src/python/mechanization.py`
-Contains the main INS mechanization logic, including single-step and batch propagation of position, velocity, and quaternion states.
+- Python
+- NumPy
+- SciPy
+- Matplotlib
+- MATLAB
 
-### `src/python/coord_transform.py`
-Provides quaternion and Euler conversion utilities used throughout the navigation pipeline.
+## Why this project matters
 
-### `src/python/KalmanFilter.py`
-Implements filtering routines for state estimation and sensor fusion tasks.
+Navigation systems are at the heart of autonomous vehicles, aerospace, robotics, and sensor fusion applications. This project showcases how foundational navigation equations and practical estimation methods can be implemented in a clear and reusable way, making it a strong example of applied computational engineering.
 
-### `src/python/plotting.py`
-Generates plots for comparing estimated and reference navigation outputs.
+## Future directions
 
-### `src/MATLAB/`
-Equivalent implementations in MATLAB for users working in the MATLAB ecosystem.
+Possible next steps include:
 
-## Data
-
-The repository includes navigation sensor data in the `data/` folder, which is used by the example scripts to validate the algorithms.
-
-## Notes
-
-This project is focused on navigation and inertial estimation workflows and is especially useful for:
-
-- INS mechanization research
-- attitude and trajectory estimation
-- algorithm prototyping in Python or MATLAB
-- comparing navigation results across frameworks
-
-## Contributing
-
-Contributions, bug fixes, and improvements are welcome. If you are extending the algorithm or adding new examples, please keep the Python and MATLAB implementations aligned where possible.
-
-## License
-
-Please check the repository for the project license file before using or distributing the code.
+- improved sensor fusion with GPS and IMU integration
+- extended EKF/UKF-based filtering
+- robust error modeling and bias estimation
+- package structure improvements for easier importing
+- documentation and benchmarking for algorithm comparison
 
 ## Author
 
-This repository appears to be authored by Arvin Chamasemani and is intended for navigation algorithm development and experimentation.
+Arvin Chamasemani
+
+## License
+
+This project is provided under the repository's license terms. Please check the repository for the relevant license file before reuse or redistribution.
